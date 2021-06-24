@@ -5,3 +5,15 @@ hello, world.
 hello, world.
 ------------
 add:222222222222222
+-------------
+version:2
+#include <iostream>
+
+using namespace std;
+
+int mian(int argc, char **argv)
+{
+	std::cout << "..." << std::endl;
+
+	return 0;
+}
