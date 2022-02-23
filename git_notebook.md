@@ -43,6 +43,10 @@ git log		# 查看版本详细信息
 git reset --hard 版本号	# 版本穿梭
 git reset --hard 8a5fc91	# 通过git reflog即可查看精简的版本号， Git切换版本，底层就是移动指针
 git reset --soft HEAD^	# 本地代码回退
+
+git checkout -f # 删除本地所有为暂存的修改
+git reset --hard	# 将修改加入暂存区
+git clean -xdf
 ```
 
 **分支操作:**
@@ -188,4 +192,66 @@ git commit
 git push origin STM_PreDev		# 提交到远程库的 STM_Pre_Dev 分支
 git pull -b STM_PreDev git@github.com:2846256621/React_study.git	# git pull 默认拉取所有分支，-b 拉取指定的分支
 ```
+
+##### git cherry-pick 以及 git patch 具体怎么使用? 以及使用场景
+?
+?
+?
+?
+?
+?
+?
+?
+?
+?
+？
+？
+？
+？
+
+##### 2. Git 的使用场景，讲当前修改保存起来，拉取最新的代码，进行操作后，再拉出之前保存的代码
+
+```shell
+git stash # git stash save "save some code change through stash"
+git stash list # 查看堆栈中保存的信息
+git stash show # 查看堆栈中最新保存的stash和当前目录的差异
+git stash show stash@{0} # 查看指定堆栈的内容与当前工作目录的差异
+git stash show -p # 查看详细的不同
+git stash apply # git stash apply stash@{0}, 将栈顶的内容应用到当前工作目录，但是不出栈
+git stash pop # 出栈
+git stash drop	# 移除指定的 stash
+git stash clear # 清空 stash
+```
+
+##### git checkout
+
+```shell
+# （1）切换分支
+git checkout branch_xxx 
+# (2)回退版本, 将暂存区的文件恢复到当前工作目录
+git checkout -- filename 
+git checkout commit_id
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
