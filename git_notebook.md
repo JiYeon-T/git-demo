@@ -6,7 +6,7 @@ https://www.jianshu.com/p/5a7028b515ad
 
 可以在 windows 提交代码的Git 配置，需要翻墙，否则"run time error"。配置如图:
 
-![image-20211122224205739](C:\Users\qz\AppData\Roaming\Typora\typora-user-images\image-20211122224205739.png)
+![image-202111	22224205739](C:\Users\qz\AppData\Roaming\Typora\typora-user-images\image-20211122224205739.png)
 
 ###### 1.Git 简介
 
@@ -36,18 +36,54 @@ cat ~/.gitconfig
 git init	# 初始化本地库，作用：让git获取这个目录的管理权限
 git status 	# 查看本地库的状态
 git add 文件名	# 从工作区添加到暂存区, eg: git add .
+git add -i ./	# --interactive 如果创建了新文件, -i 会将新文件也添加到修改
+git add -u ./	# --update 仅添加在原来的基础上修改的文件, 新增加的文件不添加
+git add -A ./	# --all 所有文件都添加
+git add -p ./ 	# 添加一个文件中的部分内容，会使用 diff 打印要提交内容的修改
+git rm--chched <file> # 将暂存区的文件删除, 相当于 git add 的逆过程
 git rm --caches 文件名	# 从暂存区删除某一个文件，只是从暂存区删除文件
+git rm <file> # 不仅删除暂存区的文件，工作区的文件也被删除了
 git commit	#提交到本地库, git commit -m "日志信息" 文件名
 git reflog		# 查看历史版本粗略信息
 git log		# 查看版本详细信息
 git reset --hard 版本号	# 版本穿梭
 git reset --hard 8a5fc91	# 通过git reflog即可查看精简的版本号， Git切换版本，底层就是移动指针
 git reset --soft HEAD^	# 本地代码回退
+git reset  # 将所有暂存区的文件退回到工作区
+git clean -d # 清空还没有 add 和 commit 的文件
 
 git checkout -f # 删除本地所有为暂存的修改
 git reset --hard	# 将修改加入暂存区
 git clean -xdf
+
+# 回退
+git checkout . #本地所有修改的。没有的提交的，都返回到原来的状态
+git stash #把所有没有提交的修改暂存到stash里面。可用git stash pop回复。
+git reset --hard HASH #返回到某个节点，不保留修改。
+git reset --soft HASH #返回到某个节点。保留修改
+
+# 变基操作
+git rebase -i 123456
 ```
+
+**其它辅助命令**
+
+```shell
+grep -i "a" ./test/a.txt # 默认是在当前目录下搜索的
+git grep # 不会搜索 .git 文件
+```
+
+
+
+**Linux命令**
+
+```shell
+diff a.txt b.txt > diff.txt # 但是 GNU 的 diff 不会比较二进制文件
+patch a.txt < diff.txt	# 打包
+# git diff 可以比较二进制文件
+```
+
+
 
 **分支操作:**
 
@@ -234,6 +270,31 @@ git checkout commit_id
 ```
 
 
+
+###### 2.撤销操作
+
+- (1)提交完代码发现有些东西没有提交，或者需要修改，可以修改完之后使用
+
+```shell
+git commit -m "first commit"
+git add forget_commit_file1.c forget_commit_file2.c # 添加忘记提交的文件
+git commit --amend
+```
+
+这个命令会将暂存区（git add）的文件提交到本地库，如果没有修改，则快照保持不变。最终本地库记录只有一个提交，第二次提交回代替第一次的提交。
+
+- 取消暂存区文件
+
+```shell
+git reset HEAD error_commit.c # 撤销暂存区的提交记录
+```
+
+- 撤销对文件的修改
+
+```shell
+git checkout -- contributing.c # 从暂存区撤销对文件的修改
+git status # 会提示很多你可能进行的操作, 可以仔细看看
+```
 
 
 

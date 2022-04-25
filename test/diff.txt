@@ -1,0 +1,8 @@
+1c1,4
+< abcdefghighlmn
+\ No newline at end of file
+---
+> 1234567890
+> abcdefg
+> 1234567890
+> 1234567890
