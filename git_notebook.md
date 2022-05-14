@@ -35,6 +35,7 @@ git config --global user.email 邮箱	# 设置用户签名
 cat ~/.gitconfig
 git init	# 初始化本地库，作用：让git获取这个目录的管理权限
 git status 	# 查看本地库的状态
+git status -s # 精简输出
 git add 文件名	# 从工作区添加到暂存区, eg: git add .
 git add -i ./	# --interactive 如果创建了新文件, -i 会将新文件也添加到修改
 git add -u ./	# --update 仅添加在原来的基础上修改的文件, 新增加的文件不添加
@@ -44,8 +45,13 @@ git rm--chched <file> # 将暂存区的文件删除, 相当于 git add 的逆过
 git rm --caches 文件名	# 从暂存区删除某一个文件，只是从暂存区删除文件
 git rm <file> # 不仅删除暂存区的文件，工作区的文件也被删除了
 git commit	#提交到本地库, git commit -m "日志信息" 文件名
+git commit --amend --reset-author --allow-empty # 允许空提交
+git commit --amend # 补充到上一笔的提交中, 而不产生额外的提交
 git reflog		# 查看历史版本粗略信息
 git log		# 查看版本详细信息
+git log --prety=fuller # 输出格式更方便观察
+git log --pretty=oneline # 仅输出 commit log
+git log --stat	# 可以在日志中看到每一笔提交的文件变更情况
 git reset --hard 版本号	# 版本穿梭
 git reset --hard 8a5fc91	# 通过git reflog即可查看精简的版本号， Git切换版本，底层就是移动指针
 git reset --soft HEAD^	# 本地代码回退
@@ -64,6 +70,17 @@ git reset --soft HASH #返回到某个节点。保留修改
 
 # 变基操作
 git rebase -i 123456
+
+# diff
+git diff # 工作区与暂存区的区别(只能看到工作区的修改内容)
+git diff HEAD # 工作区与本地库的区别
+git diff --cached # 暂存区与本地库的区别
+git diff --staged # == --cached
+
+# pull & fetch
+git fetch # 会将当前项目的所有分支的修改全部获取, 但不直接合并, 需要 git merge 进行合并
+git pull # git pull = git fetch + git merget FETCH_HEAD
+# git pull使用给定的参数运行git fetch，并调用git merge将检索到的分支头合并到当前分支中。
 ```
 
 **其它辅助命令**
@@ -71,6 +88,7 @@ git rebase -i 123456
 ```shell
 grep -i "a" ./test/a.txt # 默认是在当前目录下搜索的
 git grep # 不会搜索 .git 文件
+git grep "hello" # 默认在当前目录的文件中进行搜索
 ```
 
 
@@ -230,20 +248,14 @@ git pull -b STM_PreDev git@github.com:2846256621/React_study.git	# git pull 默�
 ```
 
 ##### git cherry-pick 以及 git patch 具体怎么使用? 以及使用场景
-?
-?
-?
-?
-?
-?
-?
-?
-?
-?
-？
-？
-？
-？
+```
+git cherry-pick # 1.可以用于同步一个同步一个分支的修改到另一个分支
+git patch	# 打 patch, 有可能是是这么用的，兼容 Linux
+git diff > diff.txt 
+git patch < diff.txt
+```
+
+
 
 ##### 2. Git 的使用场景，讲当前修改保存起来，拉取最新的代码，进行操作后，再拉出之前保存的代码
 
@@ -297,6 +309,74 @@ git status # 会提示很多你可能进行的操作, 可以仔细看看
 ```
 
 
+
+##### 详细讲解
+
+- git 配置变量, 保存在 ~/.gitconfig 文件中 或者系统文件 /etc/gitconfig 中
+
+```shell
+git --version
+git config --global user.name "qz"
+git config --global user.email "897707210@qq.com"
+git config --system alias.st status # 设置 git 命令的别名 git st
+git config --system alias.ci commit # git ci
+git config --system alias.lg "log --pretty=fuller" # 设置长的别名
+git config --unset --system alias.lg  # unalias ???
+# 如果拥有管理员权限则可以使用 sudo 让所有用户都使用这个别名
+sudo git config --system alias.st status
+sudo git config --system alias.ci commit
+# 设置颜色
+git config --global color.ui true
+vi ~/.gitconfig
+# 查看配置文件所有位置 ，INI 文件格式
+git config -e # 查看版本库级别的配置文件, 当前库目录下 .git/config 文件，使用的时候优先级最高
+git config -e --global # 全局的配置文件, 在用户家目录下的 ~/.gitconfig 文件， windows:C:/user/qz/.gitconfig
+git config -e --system # 系统级的配置, /etc/gitconfig 文件, windows:D:/install_location/GitInstallFile/Git/etc/gitconfig
+# 删除设置
+git config --unset --global color.ui
+# git config 命令, 传入key-get, 传入key-val:set，
+git confg user.name # 读取设置的参数
+git commit --allow-empty -m "firt commit" # 可以没有作者提交
+# git config 可以打开任何 INI 格式的文件并设置参数
+GIT_CONFIG=test.ini git config a.b.c.d "hello,world" # 在当前目录下生成一个 test.ini(INI格式)的文件，可以用于其它软件的配置使用
+GIT_CONFIG=test.ini git config a.b.c.d
+git config --unset a.b.c.d # 删除 当前版本库目录下 .git/config 文件中的 [a "b.c"]
+```
+
+![img](C:\Users\qz\AppData\Local\Temp\企业微信截图_16524906117055.png)
+
+- 版本库初始化
+
+```shell
+git init # git init demo, 会创建一个 demo 目录, 并初始化仓库
+echo "hello" > hello.txt
+git add hello.txt
+git commit -m "first commit" # 如果不想使用 vim 则可以使用 -m 参数编辑提交说明
+git rev-parse --git-dir # 获取版本库所在目录（.git目录位置）, 这些命令写 shell 脚本的时候有可能会用到
+git rev-parse --show-toplevel # 显示版本库的位置
+git rev-parse --show-prefix # 项目版本库的相对路径
+git rev-parse --show-cdup # 显示工作区的深度
+git rev-parse --help # file:///D:/install_location/GitInstallFile/Git/mingw64/share/doc/git-doc/git-rev-parse.html
+```
+
+- strace 命令查看命令执行过程
+
+```shell
+strace ls # 会打印这个命令执行的详细过程, 比如：从创建线程创建，加载动态库，创建进程一直到进程结束
+strace -e 'trace=file' git status # 跟踪 git status 向上递归查找 .git 文件的过程
+```
+
+**可以学习的地方有很多比如 log保存格式，创建进程，进程中创建线程等等**
+
+- ReaMine bug 管理系统
+
+**Android 项目为了更好的使用 Git 实现对代码的集中管理，开发了一套叫做 Gerrit 的审核服务器来管理 Git 提交，对提交者的邮件地址进行审核**
+
+- 暂存区
+
+```shell
+ls --full-time a.txt # 会显示时间戳的
+```
 
 
 
