@@ -378,6 +378,7 @@ strace -e 'trace=file' git status # 跟踪 git status 向上递归查找 .git �
 ls --full-time a.txt # 会显示时间戳的
 ```
 
+<<<<<<< HEAD
 - HEAD
 
 HEAD 是指向 master 分支的 cursor, 出现 HEAD 的地方就可以用分支名替换, 
@@ -388,6 +389,8 @@ git diff master
 
 
 
+=======
+>>>>>>> b88579de4629bc1ad248556fa098182a0ff0478a
 
 
 
